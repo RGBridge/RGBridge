@@ -28,6 +28,19 @@
 			<version>20210307</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.32</version>
+		</dependency>
+
+		<!-- JavaFX Libraries -->
+		<dependency>
+			<groupId>fx.graph.editor</groupId>
+			<artifactId>graph-editor-core</artifactId>
+			<version>11.0.7</version>
+		</dependency>
+
 		<!-- JavaFX -->
 		<dependency>
 			<groupId>org.openjfx</groupId>

@@ -1,6 +1,8 @@
 package org.rgbridge.rgbridge.utils;
 
 import org.json.JSONObject;
+import org.rgbridge.rgbridge.entities.Device;
+import org.rgbridge.rgbridge.entities.Effect;
 import org.rgbridge.rgbridge.entities.Event;
 import org.rgbridge.rgbridge.entities.Game;
 
@@ -10,11 +12,14 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class StorageUtils {
+	public StorageUtils() {
+		throw new IllegalStateException("Utility class");
+	}
+
 	private static File storageRoot() {
 		return new File(System.getenv("APPDATA"));
 	}
@@ -33,7 +38,8 @@ public class StorageUtils {
 		}
 	}
 
-	public static boolean gameExist(String gameId) {
+	// GAMES
+	public static boolean gameExists(String gameId) {
 		File gameFile = new File(storageRoot() + "/RGBridge/games/" + gameId + ".json");
 
 		return gameFile.exists() && !gameFile.isDirectory();
@@ -75,6 +81,7 @@ public class StorageUtils {
 				while(myReader.hasNextLine()) {
 					gameFileRaw.append(myReader.nextLine());
 				}
+
 				myReader.close();
 
 				JSONObject gameObj = new JSONObject(gameFileRaw.toString());
@@ -83,6 +90,69 @@ public class StorageUtils {
 								gameObj.getString("name"),
 								gameObj.getString("id"),
 								new ArrayList<Event>()
+						)
+				);
+			} catch(Exception e) {
+				e.printStackTrace();
+				return toReturn;
+			}
+		}
+
+		return toReturn;
+	}
+
+	// Devices
+	public static boolean deviceExtists(String deviceId) {
+		File deviceFile = new File(storageRoot() + "/RGBridge/devices/" + deviceId + ".json");
+
+		return deviceFile.exists() && !deviceFile.isDirectory();
+	}
+
+	public static boolean createDevice(Device device) {
+		try {
+			File deviceFile = new File(storageRoot() + "/RGBridge/devices/" + device.getUuid() + ".json");
+			JSONObject deviceObj = new JSONObject();
+
+			if(deviceFile.createNewFile()) {
+				deviceObj.put("name", device.getName());
+				deviceObj.put("id", device.getUuid());
+
+				PrintWriter pw = new PrintWriter(deviceFile);
+				pw.write(deviceObj.toString());
+				pw.flush();
+
+				return true;
+			} else {
+				return false;
+			}
+
+		} catch(IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static ArrayList<Device> getAllDevices() {
+		File deviceFolder = new File(storageRoot() + "/RGBridge/devices/");
+		ArrayList<Device> toReturn = new ArrayList<Device>();
+
+		for(File deviceFile : Objects.requireNonNull(deviceFolder.listFiles())) {
+			try {
+				Scanner myReader = new Scanner(deviceFile);
+				StringBuilder deviceFileRaw = new StringBuilder();
+
+				while(myReader.hasNextLine()) {
+					deviceFileRaw.append(myReader.nextLine());
+				}
+
+				myReader.close();
+
+				JSONObject deviceObj = new JSONObject(deviceFileRaw.toString());
+				toReturn.add(
+						new Device(
+								deviceObj.getString("name"),
+								deviceObj.getString("id"),
+								new ArrayList<Effect>()
 						)
 				);
 			} catch(Exception e) {

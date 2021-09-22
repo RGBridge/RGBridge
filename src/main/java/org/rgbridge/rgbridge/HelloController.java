@@ -34,8 +34,6 @@ public class HelloController {
 		model = GraphFactory.eINSTANCE.createGModel();
 		graphEditor.setModel(model);
 		graphEditorContainer.setGraphEditor(graphEditor);
-
-		createEffect().setType();
 	}
 
 	private GNode createEvent() {

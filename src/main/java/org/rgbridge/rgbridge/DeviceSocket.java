@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import org.rgbridge.rgbridge.entities.Device;
 import org.rgbridge.rgbridge.entities.Effect;
 import org.rgbridge.rgbridge.utils.DeviceUtils;
+import org.rgbridge.rgbridge.utils.StorageUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,13 +80,20 @@ public class DeviceSocket {
 						);
 					}
 
-					DeviceUtils.addDevice(
-							new Device(
-									deviceObj.getString("name"),
-									deviceObj.getString("uuid"),
-									deviceEffects
-							)
+					Device device = new Device(
+							deviceObj.getString("name"),
+							deviceObj.getString("uuid"),
+							deviceEffects
 					);
+
+					if(!StorageUtils.deviceExtists(device.getUuid())) {
+						StorageUtils.createDevice(device);
+					}
+
+					if(!DeviceUtils.containsDevice(device)) {
+						DeviceUtils.addDevice(device);
+					}
+
 					break;
 			}
 		} catch(JSONException e) {

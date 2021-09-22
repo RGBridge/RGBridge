@@ -59,7 +59,7 @@ public class GameSocket {
 							events
 					);
 
-					if(!StorageUtils.gameExist(game.getGameId())) {
+					if(!StorageUtils.gameExists(game.getGameId())) {
 						StorageUtils.createGame(game);
 					}
 

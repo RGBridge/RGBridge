@@ -4,7 +4,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.rgbridge.rgbridge.entities.Game;
+import org.rgbridge.commons.Game;
+import org.rgbridge.rgbridge.entities.Device;
+import org.rgbridge.rgbridge.utils.DeviceUtils;
 import org.rgbridge.rgbridge.utils.GameUtils;
 import org.rgbridge.rgbridge.utils.StorageUtils;
 import spark.Spark;
@@ -30,23 +32,35 @@ public class HelloApplication extends Application {
 		launch();
 	}
 
+	public static void loadSavedDevices() {
+		for(Device device : StorageUtils.getAllDevices()) {
+			DeviceUtils.addDevice(device);
+		}
+
+		helloController.refreshTree();
+	}
+
 	public static void loadSavedGames() {
 		for(Game game : StorageUtils.getAllGames()) {
 			GameUtils.addGame(game);
 		}
 
-		GameUtils.refreshGamesList();
+		helloController.refreshTree();
 	}
 
 	@Override
 	public void start(Stage stage) throws IOException {
 		FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+
 		Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+		scene.getStylesheets().add(getClass().getResource("titledskins.css").toExternalForm());
+
 		stage.setTitle("Hello!");
 		stage.setScene(scene);
 		stage.show();
 
 		helloController = fxmlLoader.getController();
-		loadSavedGames();
+		/*loadSavedDevices();
+		loadSavedGames();*/
 	}
 }

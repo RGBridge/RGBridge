@@ -8,13 +8,15 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.rgbridge.rgbridge.entities.Event;
-import org.rgbridge.rgbridge.entities.Game;
+import org.rgbridge.commons.Event;
+import org.rgbridge.commons.Game;
 import org.rgbridge.rgbridge.utils.GameUtils;
 import org.rgbridge.rgbridge.utils.StorageUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static org.rgbridge.rgbridge.HelloApplication.helloController;
 
 @WebSocket
 public class GameSocket {
@@ -67,7 +69,7 @@ public class GameSocket {
 						GameUtils.addGame(game);
 					}
 
-					GameUtils.refreshGamesList();
+					helloController.refreshTree();
 
 					break;
 			}

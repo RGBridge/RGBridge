@@ -1,10 +1,11 @@
 package org.rgbridge.rgbridge.utils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
+import org.rgbridge.commons.Event;
+import org.rgbridge.commons.Game;
 import org.rgbridge.rgbridge.entities.Device;
-import org.rgbridge.rgbridge.entities.Effect;
-import org.rgbridge.rgbridge.entities.Event;
-import org.rgbridge.rgbridge.entities.Game;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,10 +13,18 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class StorageUtils {
+	private static final ObjectMapper om;
+
+	static {
+		om = new ObjectMapper();
+		om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
+
 	public StorageUtils() {
 		throw new IllegalStateException("Utility class");
 	}
@@ -32,6 +41,7 @@ public class StorageUtils {
 
 				// Create subfolders
 				Files.createDirectory(Path.of(storageRoot().getAbsolutePath() + "/RGBridge/games"));
+				Files.createDirectory(Path.of(storageRoot().getAbsolutePath() + "/RGBridge/devices"));
 			}
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -110,12 +120,12 @@ public class StorageUtils {
 
 	public static boolean createDevice(Device device) {
 		try {
-			File deviceFile = new File(storageRoot() + "/RGBridge/devices/" + device.getUuid() + ".json");
+			File deviceFile = new File(storageRoot() + "/RGBridge/devices/" + device.getDeviceUuid() + ".json");
 			JSONObject deviceObj = new JSONObject();
 
 			if(deviceFile.createNewFile()) {
 				deviceObj.put("name", device.getName());
-				deviceObj.put("id", device.getUuid());
+				deviceObj.put("id", device.getDeviceUuid());
 
 				PrintWriter pw = new PrintWriter(deviceFile);
 				pw.write(deviceObj.toString());
@@ -152,7 +162,7 @@ public class StorageUtils {
 						new Device(
 								deviceObj.getString("name"),
 								deviceObj.getString("id"),
-								new ArrayList<Effect>()
+								new HashMap<>()
 						)
 				);
 			} catch(Exception e) {
